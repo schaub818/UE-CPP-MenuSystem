@@ -26,7 +26,31 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 
 void UPuzzlePlatformsGameInstance::Init()
 {
+	Super::Init();
+
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Init"));
+}
+
+void UPuzzlePlatformsGameInstance::LoadMenu()
+{
+	if (!ensure(menuClass != nullptr))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("Menu class not found!")));
+
+		return;
+	}
+
+	UUserWidget* menu = CreateWidget<UUserWidget>(this, menuClass);
+
+	if (!ensure(menu != nullptr))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("CreateWidget failed!")));
+
+		return;
+	}
+
+	menu->bIsFocusable = true;
+	menu->AddToViewport();
 }
 
 void UPuzzlePlatformsGameInstance::Host()
