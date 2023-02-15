@@ -3,10 +3,25 @@
 #include "PuzzlePlatformsGameInstance.h"
 
 #include "Engine/Engine.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Blueprint/UserWidget.h"
+
+#include "PlatformTrigger.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectInitializer)
 {
-	UE_LOG(LogTemp, Warning, TEXT("GameInstance Constructor"));
+	ConstructorHelpers::FClassFinder<UUserWidget> menuBPClassFinder(TEXT("/Game/MenuSystem/WBP_MainMenu"));
+
+	if (!ensure(menuBPClassFinder.Class != nullptr))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Menu class not found!"));
+
+		return;
+	}
+
+	menuClass = menuBPClassFinder.Class;
+
+	UE_LOG(LogTemp, Warning, TEXT("Found class %s"), *menuClass->GetName());
 }
 
 void UPuzzlePlatformsGameInstance::Init()
