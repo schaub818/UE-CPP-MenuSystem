@@ -14,10 +14,16 @@ class PUZZLEPLATFORMS_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
 
+protected:
+	virtual bool Initialize() override;
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BTN_Host;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BTN_Join;
+
+	UFUNCTION()
+	void OnBTN_HostClicked();
 };
