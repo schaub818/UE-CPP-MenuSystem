@@ -3,6 +3,7 @@
 
 #include "MenuSystem/MainMenu.h"
 #include "Components/Button.h"
+#include "PuzzlePlatformsGameInstance.h"
 
 bool UMainMenu::Initialize()
 {
@@ -23,5 +24,15 @@ bool UMainMenu::Initialize()
 
 void UMainMenu::OnBTN_HostClicked()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("Hosting server")));
+	if (!ensure(menuInterface != nullptr))
+	{
+		return;
+	}
+
+	menuInterface->Host();
+}
+
+void UMainMenu::SetMenuInterface(IMenuInterface* interface)
+{
+	menuInterface = interface;
 }

@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 
 #include "PlatformTrigger.h"
+#include "MenuSystem/MainMenu.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectInitializer)
 {
@@ -28,7 +29,7 @@ void UPuzzlePlatformsGameInstance::Init()
 {
 	Super::Init();
 
-	UE_LOG(LogTemp, Warning, TEXT("GameInstance Init"));
+
 }
 
 void UPuzzlePlatformsGameInstance::LoadMenu()
@@ -40,7 +41,7 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 		return;
 	}
 
-	UUserWidget* menu = CreateWidget<UUserWidget>(this, menuClass);
+	menu = CreateWidget<UMainMenu>(this, menuClass);
 
 	if (!ensure(menu != nullptr))
 	{
@@ -51,16 +52,9 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 
 	menu->bIsFocusable = true;
 	menu->AddToViewport();
+	menu->SetMenuInterface(this);
 
-	APlayerController* PlayerController = GetFirstLocalPlayerController();
-	if (!ensure(PlayerController != nullptr)) return;
-
-	FInputModeUIOnly inputModeData;
-
-	inputModeData.SetWidgetToFocus(menu->TakeWidget());
-	inputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-	PlayerController->SetInputMode(inputModeData);
+	SetUIInput(true);
 }
 
 void UPuzzlePlatformsGameInstance::Host()
@@ -74,6 +68,8 @@ void UPuzzlePlatformsGameInstance::Host()
 	if (!ensure(World != nullptr)) return;
 
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+
+	SetUIInput(false);
 }
 
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
@@ -87,4 +83,37 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 	if (!ensure(PlayerController != nullptr)) return;
 
 	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+
+	SetUIInput(false);
+}
+
+void UPuzzlePlatformsGameInstance::SetUIInput(bool uiInputEnabled)
+{
+	if (!ensure(menu != nullptr))
+	{
+		return;
+	}
+
+	APlayerController* playerController = GetFirstLocalPlayerController();
+
+	if (!ensure(playerController != nullptr))
+	{
+		return;
+	}
+
+	if (uiInputEnabled)
+	{
+		FInputModeUIOnly inputModeData;
+
+		inputModeData.SetWidgetToFocus(menu->TakeWidget());
+		inputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+		playerController->SetInputMode(inputModeData);
+	}
+	else
+	{
+		FInputModeGameOnly inputModeData;
+
+		playerController->SetInputMode(inputModeData);
+	}
 }
