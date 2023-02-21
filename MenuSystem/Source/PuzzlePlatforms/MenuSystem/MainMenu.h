@@ -25,12 +25,30 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BTN_MainJoin;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* BTN_Cancel;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidgetSwitcher* WSW_MenuSwitcher;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* OVL_MainMenu;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* OVL_JoinMenu;
+
 	IMenuInterface* menuInterface;
 
 	APlayerController* playerController;
 
 	UFUNCTION()
 	void OnBTN_MainHostClicked();
+
+	UFUNCTION()
+	void OnBTN_MainJoinClicked();
+
+	UFUNCTION()
+	void OnBTN_CancelClicked();
 
 public:
 	void SetMenuInterface(IMenuInterface* interface);

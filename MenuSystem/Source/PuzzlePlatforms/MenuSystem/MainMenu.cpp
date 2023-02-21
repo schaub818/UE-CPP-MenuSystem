@@ -2,7 +2,11 @@
 
 
 #include "MenuSystem/MainMenu.h"
+
 #include "Components/Button.h"
+#include "Components/Widget.h"
+#include "Components/WidgetSwitcher.h"
+
 #include "PuzzlePlatformsGameInstance.h"
 
 bool UMainMenu::Initialize()
@@ -19,6 +23,20 @@ bool UMainMenu::Initialize()
 
 	BTN_MainHost->OnClicked.AddDynamic(this, &UMainMenu::OnBTN_MainHostClicked);
 
+	if (!ensure(BTN_MainJoin != nullptr))
+	{
+		return false;
+	}
+
+	BTN_MainJoin->OnClicked.AddDynamic(this, &UMainMenu::OnBTN_MainJoinClicked);
+
+	if (!ensure(BTN_Cancel != nullptr))
+	{
+		return false;
+	}
+
+	BTN_Cancel->OnClicked.AddDynamic(this, &UMainMenu::OnBTN_CancelClicked);
+
 	return true;
 }
 
@@ -30,6 +48,36 @@ void UMainMenu::OnBTN_MainHostClicked()
 	}
 
 	menuInterface->Host();
+}
+
+void UMainMenu::OnBTN_MainJoinClicked()
+{
+	if (!ensure(WSW_MenuSwitcher != nullptr))
+	{
+		return;
+	}
+
+	if (!ensure(OVL_JoinMenu != nullptr))
+	{
+		return;
+	}
+
+	WSW_MenuSwitcher->SetActiveWidget(OVL_JoinMenu);
+}
+
+void UMainMenu::OnBTN_CancelClicked()
+{
+	if (!ensure(WSW_MenuSwitcher != nullptr))
+	{
+		return;
+	}
+
+	if (!ensure(OVL_MainMenu != nullptr))
+	{
+		return;
+	}
+
+	WSW_MenuSwitcher->SetActiveWidget(OVL_MainMenu);
 }
 
 void UMainMenu::SetMenuInterface(IMenuInterface* interface)
