@@ -29,11 +29,6 @@ void UPuzzlePlatformsGameInstance::Init()
 {
 	Super::Init();
 
-
-}
-
-void UPuzzlePlatformsGameInstance::LoadMenu()
-{
 	if (!ensure(menuClass != nullptr))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("Menu class not found!")));
@@ -50,26 +45,34 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 		return;
 	}
 
-	menu->bIsFocusable = true;
-	menu->AddToViewport();
-	menu->SetMenuInterface(this);
+	menu->Setup(this);
+}
 
-	SetUIInput(true);
+void UPuzzlePlatformsGameInstance::LoadMenu()
+{
+	if (!ensure(menu != nullptr))
+	{
+		return;
+	}
+
+	menu->Enable();
 }
 
 void UPuzzlePlatformsGameInstance::Host()
 {
-	UEngine* Engine = GetEngine();
-	if (!ensure(Engine != nullptr)) return;
-
-	Engine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Hosting"));
+	if (menu != nullptr)
+	{
+		menu->Disable();
+	}
 
 	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
+
+	if (!ensure(World != nullptr))
+	{
+		return;
+	}
 
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
-
-	SetUIInput(false);
 }
 
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
@@ -83,37 +86,4 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 	if (!ensure(PlayerController != nullptr)) return;
 
 	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
-
-	SetUIInput(false);
-}
-
-void UPuzzlePlatformsGameInstance::SetUIInput(bool uiInputEnabled)
-{
-	if (!ensure(menu != nullptr))
-	{
-		return;
-	}
-
-	APlayerController* playerController = GetFirstLocalPlayerController();
-
-	if (!ensure(playerController != nullptr))
-	{
-		return;
-	}
-
-	if (uiInputEnabled)
-	{
-		FInputModeUIOnly inputModeData;
-
-		inputModeData.SetWidgetToFocus(menu->TakeWidget());
-		inputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-		playerController->SetInputMode(inputModeData);
-	}
-	else
-	{
-		FInputModeGameOnly inputModeData;
-
-		playerController->SetInputMode(inputModeData);
-	}
 }

@@ -27,9 +27,14 @@ private:
 
 	IMenuInterface* menuInterface;
 
+	APlayerController* playerController;
+
 	UFUNCTION()
 	void OnBTN_HostClicked();
 
 public:
 	void SetMenuInterface(IMenuInterface* interface);
+	void Setup(IMenuInterface* interface);
+	void Enable();
+	void Disable();
 };

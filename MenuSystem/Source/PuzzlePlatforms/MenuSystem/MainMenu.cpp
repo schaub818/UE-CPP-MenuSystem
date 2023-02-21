@@ -36,3 +36,55 @@ void UMainMenu::SetMenuInterface(IMenuInterface* interface)
 {
 	menuInterface = interface;
 }
+
+void UMainMenu::Setup(IMenuInterface* menuInterface)
+{
+	this->menuInterface = menuInterface;
+	this->bIsFocusable = true;
+}
+
+void UMainMenu::Enable()
+{
+	UWorld* world = GetWorld();
+
+	if (!ensure(world != nullptr))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("World is null!")));
+
+		return;
+	}
+
+	playerController = world->GetFirstPlayerController();
+
+	if (!ensure(playerController != nullptr))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("playerController is null!")));
+
+		return;
+	}
+
+	this->AddToViewport();
+
+	FInputModeUIOnly inputModeData;
+
+	inputModeData.SetWidgetToFocus(this->TakeWidget());
+	inputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+	playerController->SetInputMode(inputModeData);
+	playerController->SetShowMouseCursor(true);
+}
+
+void UMainMenu::Disable()
+{
+	if (!ensure(playerController != nullptr))
+	{
+		return;
+	}
+
+	this->RemoveFromViewport();
+
+	FInputModeGameOnly inputModeData;
+
+	playerController->SetInputMode(inputModeData);
+	playerController->SetShowMouseCursor(false);
+}
