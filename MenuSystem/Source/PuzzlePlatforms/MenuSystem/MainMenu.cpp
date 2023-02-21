@@ -12,17 +12,17 @@ bool UMainMenu::Initialize()
 		return false;
 	}
 
-	if (!ensure(BTN_Host != nullptr))
+	if (!ensure(BTN_MainHost != nullptr))
 	{
 		return false;
 	}
 
-	BTN_Host->OnClicked.AddDynamic(this, &UMainMenu::OnBTN_HostClicked);
+	BTN_MainHost->OnClicked.AddDynamic(this, &UMainMenu::OnBTN_MainHostClicked);
 
 	return true;
 }
 
-void UMainMenu::OnBTN_HostClicked()
+void UMainMenu::OnBTN_MainHostClicked()
 {
 	if (!ensure(menuInterface != nullptr))
 	{

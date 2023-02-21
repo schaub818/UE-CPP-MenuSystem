@@ -20,17 +20,17 @@ protected:
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	class UButton* BTN_Host;
+	class UButton* BTN_MainHost;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* BTN_Join;
+	class UButton* BTN_MainJoin;
 
 	IMenuInterface* menuInterface;
 
 	APlayerController* playerController;
 
 	UFUNCTION()
-	void OnBTN_HostClicked();
+	void OnBTN_MainHostClicked();
 
 public:
 	void SetMenuInterface(IMenuInterface* interface);
