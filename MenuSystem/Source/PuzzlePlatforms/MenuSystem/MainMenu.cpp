@@ -4,6 +4,7 @@
 #include "MenuSystem/MainMenu.h"
 
 #include "Components/Button.h"
+#include "Components/EditableTextBox.h"
 #include "Components/Widget.h"
 #include "Components/WidgetSwitcher.h"
 
@@ -29,6 +30,13 @@ bool UMainMenu::Initialize()
 	}
 
 	BTN_MainJoin->OnClicked.AddDynamic(this, &UMainMenu::OnBTN_MainJoinClicked);
+
+	if (!ensure(BTN_Join != nullptr))
+	{
+		return false;
+	}
+
+	BTN_Join->OnClicked.AddDynamic(this, &UMainMenu::OnBTN_JoinClicked);
 
 	if (!ensure(BTN_Cancel != nullptr))
 	{
@@ -65,6 +73,21 @@ void UMainMenu::OnBTN_MainJoinClicked()
 	WSW_MenuSwitcher->SetActiveWidget(OVL_JoinMenu);
 }
 
+void UMainMenu::OnBTN_JoinClicked()
+{
+	if (!ensure(menuInterface != nullptr))
+	{
+		return;
+	}
+
+	if (!ensure(TXT_IPAddress != nullptr))
+	{
+		return;
+	}
+
+	menuInterface->Join(TXT_IPAddress->GetText().ToString());
+}
+
 void UMainMenu::OnBTN_CancelClicked()
 {
 	if (!ensure(WSW_MenuSwitcher != nullptr))
@@ -85,25 +108,15 @@ void UMainMenu::SetMenuInterface(IMenuInterface* interface)
 	menuInterface = interface;
 }
 
-void UMainMenu::Setup(IMenuInterface* menuInterface)
+void UMainMenu::Setup(IMenuInterface* interface)
 {
-	this->menuInterface = menuInterface;
+	menuInterface = interface;
+
 	this->bIsFocusable = true;
 }
 
-void UMainMenu::Enable()
+void UMainMenu::Enable(APlayerController* playerController)
 {
-	UWorld* world = GetWorld();
-
-	if (!ensure(world != nullptr))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("World is null!")));
-
-		return;
-	}
-
-	playerController = world->GetFirstPlayerController();
-
 	if (!ensure(playerController != nullptr))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("playerController is null!")));
@@ -122,14 +135,14 @@ void UMainMenu::Enable()
 	playerController->SetShowMouseCursor(true);
 }
 
-void UMainMenu::Disable()
+void UMainMenu::Disable(APlayerController* playerController)
 {
 	if (!ensure(playerController != nullptr))
 	{
 		return;
 	}
 
-	this->RemoveFromViewport();
+	this->RemoveFromParent();
 
 	FInputModeGameOnly inputModeData;
 

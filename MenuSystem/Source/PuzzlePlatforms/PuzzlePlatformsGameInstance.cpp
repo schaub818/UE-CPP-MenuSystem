@@ -55,14 +55,14 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 		return;
 	}
 
-	menu->Enable();
+	menu->Enable(GetFirstLocalPlayerController());
 }
 
 void UPuzzlePlatformsGameInstance::Host()
 {
 	if (menu != nullptr)
 	{
-		menu->Disable();
+		menu->Disable(GetFirstLocalPlayerController());
 	}
 
 	UWorld* World = GetWorld();
@@ -77,13 +77,17 @@ void UPuzzlePlatformsGameInstance::Host()
 
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 {
-	UEngine* Engine = GetEngine();
-	if (!ensure(Engine != nullptr)) return;
+	if (menu != nullptr)
+	{
+		menu->Disable(GetFirstLocalPlayerController());
+	}
 
-	Engine->AddOnScreenDebugMessage(0, 5, FColor::Green, FString::Printf(TEXT("Joining %s"), *Address));
+	APlayerController* playerController = GetFirstLocalPlayerController();
 
-	APlayerController* PlayerController = GetFirstLocalPlayerController();
-	if (!ensure(PlayerController != nullptr)) return;
+	if (!ensure(playerController != nullptr))
+	{
+		return;
+	}
 
-	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+	playerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 }

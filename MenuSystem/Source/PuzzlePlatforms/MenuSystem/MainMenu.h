@@ -26,7 +26,13 @@ private:
 	class UButton* BTN_MainJoin;
 
 	UPROPERTY(meta = (BindWidget))
+	class UButton* BTN_Join;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* BTN_Cancel;
+
+	UPROPERTY(meta = (BindWidget))
+	class UEditableTextBox* TXT_IPAddress;
 
 	UPROPERTY(meta = (BindWidget))
 	class UWidgetSwitcher* WSW_MenuSwitcher;
@@ -39,8 +45,6 @@ private:
 
 	IMenuInterface* menuInterface;
 
-	APlayerController* playerController;
-
 	UFUNCTION()
 	void OnBTN_MainHostClicked();
 
@@ -48,11 +52,14 @@ private:
 	void OnBTN_MainJoinClicked();
 
 	UFUNCTION()
+	void OnBTN_JoinClicked();
+
+	UFUNCTION()
 	void OnBTN_CancelClicked();
 
 public:
 	void SetMenuInterface(IMenuInterface* interface);
 	void Setup(IMenuInterface* interface);
-	void Enable();
-	void Disable();
+	void Enable(APlayerController* playerController);
+	void Disable(APlayerController* playerController);
 };
